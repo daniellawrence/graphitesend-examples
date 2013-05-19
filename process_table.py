@@ -1,12 +1,14 @@
+"Read the process table using the ps command, then throw the data at graphite."
 #!/usr/bin/env python
 import graphitesend
 from collections import defaultdict
 import os
 
 def gather_ps_data():
-    PS_COLS=['size','rss','user','pcpu','pmem','command']
+    "Execute ps, capture all the data into a dict()"
+    PS_COLS = ['size', 'rss', 'user', 'pcpu', 'pmem', 'command']
     PS_COMMAND = 'ps -eo size,rss,user:20,pcpu,pmem,command'
-    PS_DATA=[]
+    PS_DATA = []
 
     for line in os.popen(PS_COMMAND).readlines():
         # Commands have lots of arguments, throw them away we just want
@@ -29,6 +31,7 @@ def gather_ps_data():
 
     return PS_DATA
 
+
 def percent_by(PS_DATA, group_field):
     group_data = defaultdict(lambda: defaultdict(int))
     for proc in PS_DATA:
@@ -45,7 +48,8 @@ def percent_by(PS_DATA, group_field):
         group_data[proc[group_field]]['count'] += 1
 
     return graphitfy_group(group_data, group_field)
-        
+
+
 def graphitfy_group(group_data, group_field):
     graphite_data = {}
     for group_field_name, usage in group_data.items():
@@ -54,13 +58,15 @@ def graphitfy_group(group_data, group_field):
             graphite_data[metric] = value
 
     return graphite_data
-    
+
+
 def main():
     PS_DATA = gather_ps_data()
     percent_by_user = percent_by(PS_DATA, "user")
     percent_by_command = percent_by(PS_DATA, "command")
     g = graphitesend.init(dryrun=True)
     print g.send_dict(percent_by_user)
+
     
 if __name__ == '__main__':
     main()
