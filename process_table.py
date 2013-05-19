@@ -36,7 +36,7 @@ def percent_by(PS_DATA, group_field):
         pmem = float(proc['pmem'])
         pcpu = float(proc['pcpu'])
         size = float(proc['size'])
-        rss = float(proc['rss'])
+        rss  = float(proc['rss'])
         # Append the key info to the running tally for 'group_field'
         group_data[proc[group_field]]['pmem']  += pmem
         group_data[proc[group_field]]['pcpu']  += pcpu
@@ -59,8 +59,8 @@ def main():
     PS_DATA = gather_ps_data()
     percent_by_user = percent_by(PS_DATA, "user")
     percent_by_command = percent_by(PS_DATA, "command")
-
-    print percent_by_user
+    g = graphitesend.init(dryrun=True)
+    print g.send_dict(percent_by_user)
     
 if __name__ == '__main__':
     main()
