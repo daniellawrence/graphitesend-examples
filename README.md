@@ -1,4 +1,5 @@
-graphite-this
+graphitesend-examples
 =============
 
-A heap of scripts that are used to must metrics into graphite using graphitesend
+A heap of scripts that are used to send metrics into graphite using graphitesend.
+
