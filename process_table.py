@@ -19,7 +19,7 @@ def gather_ps_data():
         if bits[0] == 'SIZE':
             continue
 
-        # Throw away kenerl tasks
+        # Throw away kernel tasks
         if bits[-1].startswith('['):
             continue
 
